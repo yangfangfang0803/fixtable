@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Group</title>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/vue.min.js"></script>
+    <script type="text/javascript" src="js/perfect-scrollbar.min.js"></script>
+    <script type="text/javascript" src="js/perfect-scrollbar.jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/perfect-scrollbar.min.css">
+    <style type="text/css">
+        .header{
+            width: 600px;
+            overflow: hidden;
+            border-left:1px solid #dcdcdc;
+            border-right:1px solid #dcdcdc;
+            position: relative;
+        }
+        .tableInfo{
+            width: 600px;
+            height: 300px;
+            overflow:auto;
+            border-left:1px solid #dcdcdc;
+            border-right:1px solid #dcdcdc;
+            border-bottom:1px solid #dcdcdc;
+            position: relative;
+        }
+        .tableSpline{
+            position: absolute;
+            top:0px;
+            height: 100%;
+            width:100px;
+            background-color: transparent;
+            left:0px;
+            box-shadow: -1px 0px 100px #8e8787;
+            border-right:1px solid #dcdcdc;
+            display: none;
+        }
+        table{
+            border-collapse: collapse;
+        }
+        table th,table td{
+            border:1px solid #dcdcdc;
+            padding:10px;
+            box-sizing: border-box;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow:hidden;
+            background-color: #fff;
+        }
+        .tableInfo tr:first-child td{border-top: 0px;}
+        table td.w100,table th.w100{width: 100px;max-width: 100px;min-width: 100px;}
+        table td.w120,table th.w120{width: 120px;max-width: 120px;min-width: 120px;}
+        table td.w150,table th.w150{width: 150px;max-width: 150px;min-width: 150px;}
+        table td.w170,table th.w170{width: 170px;max-width: 170px;min-width: 170px;}
+        table td.w200,table th.w200{width: 200px;max-width: 200px;min-width: 200px;}
+
+        .tableInfo tr td:first-child,.header tr th:first-child{
+            border-left: none;
+        }
+        .tableInfo tr:last-child td{border-bottom: none;}
+        .tableInfo tr td:last-child{border-right: none;}
+
+    </style>
+</head>
+<body>
+    <div class="mainbody" id="mainbody">
+        <div class="header">
+            <table>
+                <tr>
+                    <th v-for="(title,index) in titleList" :class="{'w100':index%3==0,'w120':index%3!=0}">{{title}}</th>
+                </tr>
+            </table>
+            <div class="tableSpline"></div>
+        </div>
+        <div class="tableInfo">
+            <table>
+                <tr v-for="info in infoList">
+                    <td v-for="(item,index) in info" :class="{'w100':index%3==0,'w120':index%3!=0}">{{item}}</td>
+                </tr>
+            </table>
+            <div class="tableSpline"></div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $(".tableInfo .tableSpline").height($(".tableInfo table").height());
+        
+        $(".tableInfo").scroll(function(e){
+            var target = e.target,left = target.scrollLeft;
+
+            $(".header").scrollLeft(left);
+
+            $(".mainbody tr td:first-child").css({
+                "position":"relative",
+                "left":left
+            });
+            if(left>0){
+                $(".tableSpline").css({
+                    "left":left,
+                    "display":"block"
+                });
+            }
+            else{
+               $(".tableSpline").hide(); 
+            }
+            
+            $(".mainbody tr th:first-child").css({
+                "position":"relative",
+                "left":left
+            });
+        });
+
+        $('.tableInfo').perfectScrollbar();
+    });
+</script>
+</html>

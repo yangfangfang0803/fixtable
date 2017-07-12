@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>固定表头和首N列</title>
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/vue.min.js"></script>
+    <script type="text/javascript" src="js/perfect-scrollbar.min.js"></script>
+    <script type="text/javascript" src="js/perfect-scrollbar.jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/perfect-scrollbar.min.css">
+    <style type="text/css">
+        .header{
+            width: 800px;
+            overflow: hidden;
+            border:1px solid #dcdcdc;
+            border-bottom:none;
+            position: relative;
+            margin:0 auto;
+        }
+        .tableInfo{
+            width: 800px;
+            height: 300px;
+            overflow:auto;
+            border-left:1px solid #dcdcdc;
+            border-right:1px solid #dcdcdc;
+            border-bottom:1px solid #dcdcdc;
+            position: relative;
+            margin:0 auto;
+        }
+        .tableSpline{
+            position: absolute;
+            top:0px;
+            height: 100%;
+            width:100px;
+            background-color: transparent;
+            left:0px;
+            background:linear-gradient(to right,#ccc,rgba(255,255,255,0) 30%,rgba(255,255,255,0));
+            display: none;
+        }
+        table{
+            border-collapse: collapse;
+            min-width: 100%;
+        }
+        table th,table td{
+            padding:0px;
+            box-sizing: border-box;
+           
+            background-color: #fff;
+        }
+        table th div,table td div{
+            border-right:1px solid #dcdcdc;
+            border-bottom:1px solid #dcdcdc;
+            padding:10px;
+        }
+        .tableInfo tr:first-child td{border-top: 0px;}
+        table td.w100,table th.w100{width: 100px;max-width: 100px;min-width: 100px;}
+        table td.w120,table th.w120{width: 120px;max-width: 120px;min-width: 120px;}
+        table td.w150,table th.w150{width: 150px;max-width: 150px;min-width: 150px;}
+        table td.w170,table th.w170{width: 170px;max-width: 170px;min-width: 170px;}
+        table td.w200,table th.w200{width: 200px;max-width: 200px;min-width: 200px;}
+        .tableInfo tr div{
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow:hidden;
+        }
+        .tableInfo tr td:first-child div,.header tr th:first-child div{
+            border-left: none;
+        }
+        /*.tableInfo tr:last-child td div{border-bottom: none;}*/
+        .header tr th:last-child div,.tableInfo tr td:last-child div{border-right: none;}
+
+        .btn{
+            border:1px solid #dcdcdc;
+            padding:5px 10px;
+            color:#656565;
+            border-radius: 5px;
+            display: inline-block;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+        .btn:hover{
+            box-shadow:inset 1px 1px 10px #dcdcdc;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="mainbody" id="mainbody">
+            <div class="header">
+                <table>
+                    <tr>
+                        <th v-for="(title,index) in titleList" :class="{'w100':index%3==0,'w120':index%3!=0}">
+                            <div>{{title}}</div>
+                        </th>
+                    </tr>
+                </table>
+                <div class="tableSpline"></div>
+            </div>
+            <div class="tableInfo">
+                <table>
+                    <tr v-for="info in infoList">
+                        <td v-for="(item,index) in info" :class="{'w100':index%3==0,'w120':index%3!=0}">
+                            <div>{{item}}</div>
+                        </td>
+                    </tr>
+                </table>
+                <div class="tableSpline"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="js/index.js"></script>
+<script type="text/javascript">
+    $(function(){
+
+        var fixNum = 3;
+        var leftArray = [],thL = $(".header").offset().left,totalLeft = 0;
+        $(".header th:lt("+fixNum+")").each(function(i){
+            var init = $(this).offset().left - thL - 1;
+            leftArray.push(init);
+            totalLeft += init;
+        });
+        totalLeft += 20;
+
+        $(".tableInfo").scroll(function(e){
+            $(".tableInfo .tableSpline").height($(".tableInfo table").height());
+            var target = e.target,left = target.scrollLeft;
+
+            $(".header").scrollLeft(left);
+            $(".header th:lt("+fixNum+")").each(function(i){
+                $(this).css({
+                    "position":"relative",
+                    "left":left
+                });
+            });
+            $(".tableInfo tr").each(function(i){
+                $(this).children("td:lt("+fixNum+")").css({
+                    "position":"relative",
+                    "left":left
+                });
+            });
+ 
+            if(left>0){
+                $(".tableSpline").css({
+                    "left":(totalLeft + left),
+                    "display":"block"
+                });
+            }
+            else{
+               $(".tableSpline").hide(); 
+            }
+        });
+
+        $('.tableInfo').perfectScrollbar();
+    });
+</script>
+</html>
